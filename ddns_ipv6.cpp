@@ -18,6 +18,7 @@
 #pragma comment(lib, "winhttp.lib")
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "User32.lib")
 
 // 强制隐藏控制台窗口 (适用于 MSVC 编译器)
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
