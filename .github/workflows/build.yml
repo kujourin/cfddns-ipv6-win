@@ -14,7 +14,14 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: [x86, x64, arm64] # 定义三种目标架构
+        target: [x86, x64, arm64] # 定义三种目标架构
+        include:
+          - target: x86
+            msvc_arch: x86
+          - target: x64
+            msvc_arch: x64
+          - target: arm64
+            msvc_arch: amd64_arm64 # 在 x64 机器上交叉编译 arm64 需要用到 amd64_arm64 工具链
 
     steps:
     - uses: actions/checkout@v4
@@ -22,17 +29,17 @@ jobs:
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: ${{ matrix.arch }} # 根据 matrix 设置编译架构
+        arch: ${{ matrix.msvc_arch }} # 根据 matrix 设置编译架构
 
     - name: Build
       # 编译输出的文件名带上对应的架构，如 cfddns-ipv6-x64.exe
-      run: cl.exe ddns_ipv6.cpp /EHsc /O2 /link /out:cfddns-ipv6-${{ matrix.arch }}.exe
+      run: cl.exe ddns_ipv6.cpp /EHsc /O2 /link /out:cfddns-ipv6-${{ matrix.target }}.exe
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: cfddns-ipv6-${{ matrix.arch }}
-        path: cfddns-ipv6-${{ matrix.arch }}.exe
+        name: cfddns-ipv6-${{ matrix.target }}
+        path: cfddns-ipv6-${{ matrix.target }}.exe
 
   release:
     needs: build
