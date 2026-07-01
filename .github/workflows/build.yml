@@ -3,6 +3,8 @@ name: Build C++ Application
 on:
   push:
     branches: [ main, master ]
+    tags:
+      - 'v*' # 当推送以 v 开头的标签时 (例如 v1.0.0)，触发发布 Release
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -10,18 +12,45 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x86, x64, arm64] # 定义三种目标架构
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.arch }} # 根据 matrix 设置编译架构
 
     - name: Build
-      run: cl.exe ddns_ipv6.cpp /EHsc /O2 /link /out:cfddns-ipv6.exe
+      # 编译输出的文件名带上对应的架构，如 cfddns-ipv6-x64.exe
+      run: cl.exe ddns_ipv6.cpp /EHsc /O2 /link /out:cfddns-ipv6-${{ matrix.arch }}.exe
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: cfddns-ipv6-win
-        path: cfddns-ipv6.exe
+        name: cfddns-ipv6-${{ matrix.arch }}
+        path: cfddns-ipv6-${{ matrix.arch }}.exe
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    # 只有当推送的是 v 开头的标签 (如 v1.0.0) 时才执行发布
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        merge-multiple: true
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: artifacts/*.exe # 因为 merge-multiple: true，所有的 exe 都在一起
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
