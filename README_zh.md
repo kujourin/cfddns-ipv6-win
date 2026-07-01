@@ -6,6 +6,7 @@
 
 ## 运行截图
 
+<!-- 请确保 screenshot.jpg 位于与 README_zh.md 相同的目录下，图片即可在此处显示 -->
 ![运行截图](screenshot.jpg)
 
 ## 特性

@@ -210,12 +210,12 @@ int main() {
     // 尝试加载配置
     if (!LoadConfig("config.ini")) {
         // 配置加载失败或文件刚创建，弹出提示并退出
-        MessageBox(NULL, L"Please configure the 'config.ini' file first.\n请先在同目录下配置 'config.ini' 文件。", L"Configuration Error", MB_OK | MB_ICONERROR);
+        MessageBoxW(NULL, L"Please configure the 'config.ini' file first.\n请先在同目录下配置 'config.ini' 文件。", L"Configuration Error", MB_OK | MB_ICONERROR);
         return 1;
     }
 
     // 创建互斥锁，防止程序多开
-    HANDLE hMutex = CreateMutex(NULL, TRUE, L"Cloudflare_DDNS_IPv6_Mutex");
+    HANDLE hMutex = CreateMutexW(NULL, TRUE, L"Cloudflare_DDNS_IPv6_Mutex");
     if (GetLastError() == ERROR_ALREADY_EXISTS) {
         CloseHandle(hMutex);
         return 0; // 如果已经有一个在运行，则静默退出
