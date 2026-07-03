@@ -32,6 +32,20 @@ SLEEP_INTERVAL_SEC=3600
 
 5. Save the `config.ini` and run the executable again. It will run silently in the background.
 
+## Running on Startup
+
+To make the application start automatically when you log in:
+1. Press `Win + R` to open the Run dialog.
+2. Type `shell:startup` and press Enter to open the Startup folder.
+3. Create a shortcut to the executable (`cfddns-ipv6-*.exe`) and place it in this folder.
+
+## Stopping the Application
+
+Since the application runs silently in the background without a window, you can stop it using Task Manager:
+1. Open Task Manager (`Ctrl + Shift + Esc`).
+2. Go to the "Details" or "Processes" tab.
+3. Find the executable (e.g., `cfddns-ipv6-x64.exe`), right-click it, and select "End task".
+
 ## Build Instructions (MSVC)
 
 To build the project yourself using Microsoft Visual C++ (MSVC):
